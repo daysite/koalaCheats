@@ -29,10 +29,11 @@
         <p>✅ Indetectable · ✅ Actualizado diario · ✅ Anti-Ban</p>
         <div class="hero-buttons">
             <button class="btn-primary" onclick="scrollToCatalogo()">Ver Productos →</button>
-            <button class="btn-whatsapp" onclick="window.open('https://wa.me/1234567890?text=Hola!%20Quiero%20comprar%20un%20panel%20de%20Free%20Fire','_blank')">
+            <!-- Botones con ID para que se actualicen desde el panel admin -->
+            <button class="btn-whatsapp" id="heroWhatsAppBtn">
                 <i class="fab fa-whatsapp"></i> WhatsApp
             </button>
-            <button class="btn-discord" onclick="window.open('https://discord.gg/tu-invitacion','_blank')">
+            <button class="btn-discord" id="heroDiscordBtn">
                 <i class="fab fa-discord"></i> Discord
             </button>
         </div>
@@ -106,15 +107,15 @@
                 <h3><i class="fas fa-koala"></i> Koala Cheats</h3>
                 <p>Paneles premium para Free Fire</p>
                 <div class="social-links">
-                    <a href="#" onclick="window.open('https://wa.me/1234567890','_blank')"><i class="fab fa-whatsapp"></i></a>
-                    <a href="#" onclick="window.open('https://discord.gg/tu-invitacion','_blank')"><i class="fab fa-discord"></i></a>
+                    <a href="#" id="footerWhatsAppLink"><i class="fab fa-whatsapp"></i></a>
+                    <a href="#" id="footerDiscordLink"><i class="fab fa-discord"></i></a>
                     <a href="#"><i class="fab fa-telegram"></i></a>
                 </div>
             </div>
             <div class="footer-section">
                 <h4>Contacto Rápido</h4>
-                <p><i class="fab fa-whatsapp"></i> +123 456 7890</p>
-                <p><i class="fab fa-discord"></i> koala.cheats</p>
+                <p id="footerWhatsappTexto"><i class="fab fa-whatsapp"></i> Cargando...</p>
+                <p id="footerDiscordTexto"><i class="fab fa-discord"></i> koala.cheats</p>
             </div>
         </div>
         <div class="footer-bottom">
