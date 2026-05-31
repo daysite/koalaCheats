@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koala Cheats - Paneles Free Fire</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <i class="fas fa-koala"></i>
+            Koala Cheats
+        </div>
+        <nav>
+            <a href="#inicio">Inicio</a>
+            <a href="#catalogo">Catálogo</a>
+            <a href="#carrito">Carrito <span id="cart-count" class="cart-count">0</span></a>
+            <a href="#contacto">Contacto</a>
+        </nav>
+        <button class="btn-nav" id="openCartBtn">🛒 Ver Carrito</button>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="hero">
+        <h1>🐨 <span class="highlight">Koala Cheats</span></h1>
+        <h2>Domina Free Fire con nuestros paneles</h2>
+        <p>✅ Indetectable · ✅ Actualizado diario · ✅ Anti-Ban</p>
+        <div class="hero-buttons">
+            <button class="btn-primary" onclick="scrollToCatalogo()">Ver Productos →</button>
+            <button class="btn-whatsapp" onclick="window.open('https://wa.me/1234567890?text=Hola!%20Quiero%20comprar%20un%20panel%20de%20Free%20Fire','_blank')">
+                <i class="fab fa-whatsapp"></i> WhatsApp
+            </button>
+            <button class="btn-discord" onclick="window.open('https://discord.gg/tu-invitacion','_blank')">
+                <i class="fab fa-discord"></i> Discord
+            </button>
+        </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="stats">
+        <div><i class="fas fa-star"></i> 4.9/5 — +12.000 clientes</div>
+        <div><i class="fas fa-shield-alt"></i> 100% Anti-Ban</div>
+        <div><i class="fas fa-bolt"></i> Entrega instantánea</div>
+    </section>
+
+    <!-- Features -->
+    <section class="features">
+        <div class="card">
+            <i class="fas fa-rocket"></i>
+            <h3>Entrega instantánea</h3>
+            <p>Recibe tu panel al instante después de pagar</p>
+        </div>
+        <div class="card">
+            <i class="fas fa-eye-slash"></i>
+            <h3>100% indetectable</h3>
+            <p>Bypass actualizado contra el anti-cheat</p>
+        </div>
+        <div class="card">
+            <i class="fas fa-headset"></i>
+            <h3>Soporte 24/7</h3>
+            <p>Por WhatsApp y Discord</p>
+        </div>
+        <div class="card">
+            <i class="fas fa-sync-alt"></i>
+            <h3>Actualizaciones gratis</h3>
+            <p>Lifetime updates incluidas</p>
+        </div>
+    </section>
+
+    <!-- Catálogo Free Fire -->
+    <section id="catalogo" class="catalogo">
+        <h2>🔥 Paneles Free Fire 🔥</h2>
+        <div class="productos" id="productos">
+            <!-- Producto 1 -->
+            <div class="producto" data-id="1" data-name="Panel Koala Lite" data-price="15">
+                <div class="producto-badge">MÁS VENDIDO</div>
+                <i class="fas fa-gamepad producto-icon"></i>
+                <h3>🐨 Panel Koala Lite</h3>
+                <p>Aimbot + Esp + Wallhack básico</p>
+                <ul class="caracteristicas">
+                    <li>✅ Aim suave</li>
+                    <li>✅ Ver paredes</li>
+                    <li>✅ Sin anuncios</li>
+                </ul>
+                <div class="precio">$15.00 USD</div>
+                <button class="btn-agregar" onclick="agregarAlCarrito(1, 'Panel Koala Lite', 15)">
+                    <i class="fas fa-cart-plus"></i> Agregar
+                </button>
+            </div>
+
+            <!-- Producto 2 -->
+            <div class="producto" data-id="2" data-name="Panel Koala Pro" data-price="25">
+                <div class="producto-badge">PROMO</div>
+                <i class="fas fa-crown producto-icon"></i>
+                <h3>🐨 Panel Koala Pro</h3>
+                <p>Aimbot + Esp + Magic Bullet</p>
+                <ul class="caracteristicas">
+                    <li>✅ Aim profesional</li>
+                    <li>✅ Magic Bullet</li>
+                    <li>✅ Anti-Ban avanzado</li>
+                </ul>
+                <div class="precio">$25.00 USD</div>
+                <button class="btn-agregar" onclick="agregarAlCarrito(2, 'Panel Koala Pro', 25)">
+                    <i class="fas fa-cart-plus"></i> Agregar
+                </button>
+            </div>
+
+            <!-- Producto 3 -->
+            <div class="producto" data-id="3" data-name="Panel Koala Ultra" data-price="35">
+                <i class="fas fa-dragon producto-icon"></i>
+                <h3>🐨 Panel Koala Ultra</h3>
+                <p>Todas las funciones + VIP</p>
+                <ul class="caracteristicas">
+                    <li>✅ Todas las funciones Pro</li>
+                    <li>✅ Soporte VIP 24/7</li>
+                    <li>✅ Acceso a betas privadas</li>
+                </ul>
+                <div class="precio">$35.00 USD</div>
+                <button class="btn-agregar" onclick="agregarAlCarrito(3, 'Panel Koala Ultra', 35)">
+                    <i class="fas fa-cart-plus"></i> Agregar
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal del Carrito -->
+    <div id="cartModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-shopping-cart"></i> Tu Carrito</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div id="cartItems" class="cart-items"></div>
+            <div class="cart-total">
+                <strong>Total: $<span id="cartTotal">0.00</span> USD</strong>
+            </div>
+            <div class="cart-buttons">
+                <button class="btn-whatsapp" id="checkoutWhatsApp">
+                    <i class="fab fa-whatsapp"></i> Pagar por WhatsApp
+                </button>
+                <button class="btn-discord" id="checkoutDiscord">
+                    <i class="fab fa-discord"></i> Pagar por Discord
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer id="contacto">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3><i class="fas fa-koala"></i> Koala Cheats</h3>
+                <p>Paneles premium para Free Fire</p>
+                <div class="social-links">
+                    <a href="#" onclick="window.open('https://wa.me/1234567890','_blank')"><i class="fab fa-whatsapp"></i></a>
+                    <a href="#" onclick="window.open('https://discord.gg/tu-invitacion','_blank')"><i class="fab fa-discord"></i></a>
+                    <a href="#"><i class="fab fa-telegram"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h4>Contacto Rápido</h4>
+                <p><i class="fab fa-whatsapp"></i> +51924537931</p>
+                <p><i class="fab fa-discord"></i> koala.cheats</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 Koala Cheats - Todos los derechos reservados</p>
+            <p><small>Los paneles son solo para uso educativo</small></p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
