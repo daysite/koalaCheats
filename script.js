@@ -316,7 +316,7 @@ function actualizarBotonesContacto() {
     const heroWhatsApp = document.getElementById('heroWhatsAppBtn');
     if (heroWhatsApp) {
         heroWhatsApp.onclick = () => {
-            const numero = config.whatsapp || '1234567890';
+            const numero = config.whatsapp || '+51924537931';
             window.open(`https://wa.me/${numero}?text=Hola!%20Quiero%20comprar%20un%20panel%20de%20Free%20Fire`, '_blank');
         };
     }
@@ -335,7 +335,7 @@ function actualizarBotonesContacto() {
     if (footerWhatsAppLink) {
         footerWhatsAppLink.onclick = (e) => {
             e.preventDefault();
-            const numero = config.whatsapp || '1234567890';
+            const numero = config.whatsapp || '+51924537931';
             window.open(`https://wa.me/${numero}?text=Hola!%20Quiero%20comprar%20un%20panel%20de%20Free%20Fire`, '_blank');
         };
     }
@@ -352,7 +352,7 @@ function actualizarBotonesContacto() {
     // Texto de contacto en footer
     const footerWhatsappTexto = document.getElementById('footerWhatsappTexto');
     if (footerWhatsappTexto) {
-        const numeroMostrar = config.whatsapp || '+123 456 7890';
+        const numeroMostrar = config.whatsapp || '+51924537931';
         footerWhatsappTexto.innerHTML = `<i class="fab fa-whatsapp"></i> ${numeroMostrar}`;
     }
     
