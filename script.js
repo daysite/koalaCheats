@@ -11,7 +11,10 @@ const productosPorDefecto = [
     { id: 3, nombre: "Panel Koala Ultra", precio: 35, caracteristicas: ["Todas las funciones Pro", "Soporte VIP", "Betas privadas"], stock: 999 }
 ];
 
-// Cargar productos desde localStorage
+// ============================================
+// FUNCIONES DE PRODUCTOS
+// ============================================
+
 function cargarProductosDesdeAdmin() {
     let productos = JSON.parse(localStorage.getItem('koalaProductos'));
     if (!productos || productos.length === 0) {
@@ -21,7 +24,6 @@ function cargarProductosDesdeAdmin() {
     actualizarProductosEnDOM(productos);
 }
 
-// Actualizar los productos mostrados en la tienda
 function actualizarProductosEnDOM(productos) {
     const productosContainer = document.getElementById('productos');
     if (!productosContainer) return;
@@ -59,7 +61,10 @@ function actualizarProductosEnDOM(productos) {
     iniciarAnimacionesProductos();
 }
 
-// Cargar carrito del localStorage
+// ============================================
+// FUNCIONES DEL CARRITO
+// ============================================
+
 function cargarCarrito() {
     const carritoGuardado = localStorage.getItem('koalaCarrito');
     if (carritoGuardado) {
@@ -68,13 +73,11 @@ function cargarCarrito() {
     }
 }
 
-// Guardar carrito en localStorage
 function guardarCarrito() {
     localStorage.setItem('koalaCarrito', JSON.stringify(carrito));
     actualizarContadorCarrito();
 }
 
-// Actualizar contador del carrito
 function actualizarContadorCarrito() {
     const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
     const cartCount = document.getElementById('cart-count');
@@ -87,7 +90,6 @@ function actualizarContadorCarrito() {
     }
 }
 
-// Agregar producto al carrito
 function agregarAlCarrito(id, nombre, precio) {
     const existingItem = carrito.find(item => item.id === id);
     
@@ -107,7 +109,6 @@ function agregarAlCarrito(id, nombre, precio) {
     guardarCarrito();
 }
 
-// Mostrar notificación flotante
 function mostrarNotificacion(mensaje) {
     const notificacionesAntiguas = document.querySelectorAll('.notificacion-flotante');
     notificacionesAntiguas.forEach(notif => notif.remove());
@@ -139,7 +140,6 @@ function mostrarNotificacion(mensaje) {
     }, 3000);
 }
 
-// Mostrar carrito modal
 function mostrarCarrito() {
     const modal = document.getElementById('cartModal');
     const cartItemsDiv = document.getElementById('cartItems');
@@ -214,7 +214,10 @@ function cerrarModalCarrito() {
     document.body.style.overflow = 'auto';
 }
 
-// Generar mensaje para WhatsApp
+// ============================================
+// FUNCIONES DE PAGO Y REGISTRO
+// ============================================
+
 function generarMensajePedido() {
     if (carrito.length === 0) return "Hola! Quiero información sobre los paneles de Free Fire";
     
@@ -240,7 +243,6 @@ function generarMensajePedido() {
     return encodeURIComponent(mensaje);
 }
 
-// Registrar venta en admin
 function registrarVentaEnAdmin(cliente, whatsapp, productos, total) {
     const ventas = JSON.parse(localStorage.getItem('koalaVentas') || '[]');
     const nuevaVenta = {
@@ -303,6 +305,69 @@ function procesarCompraDiscord() {
     cerrarModalCarrito();
 }
 
+// ============================================
+// FUNCIÓN NUEVA: ACTUALIZAR BOTONES DE CONTACTO
+// ============================================
+
+function actualizarBotonesContacto() {
+    const config = JSON.parse(localStorage.getItem('koalaConfig') || '{}');
+    
+    // Botón WhatsApp del hero
+    const heroWhatsApp = document.getElementById('heroWhatsAppBtn');
+    if (heroWhatsApp) {
+        heroWhatsApp.onclick = () => {
+            const numero = config.whatsapp || '1234567890';
+            window.open(`https://wa.me/${numero}?text=Hola!%20Quiero%20comprar%20un%20panel%20de%20Free%20Fire`, '_blank');
+        };
+    }
+    
+    // Botón Discord del hero
+    const heroDiscord = document.getElementById('heroDiscordBtn');
+    if (heroDiscord) {
+        heroDiscord.onclick = () => {
+            const link = config.discord || 'https://discord.gg/tu-invitacion';
+            window.open(link, '_blank');
+        };
+    }
+    
+    // Links del footer
+    const footerWhatsAppLink = document.getElementById('footerWhatsAppLink');
+    if (footerWhatsAppLink) {
+        footerWhatsAppLink.onclick = (e) => {
+            e.preventDefault();
+            const numero = config.whatsapp || '1234567890';
+            window.open(`https://wa.me/${numero}?text=Hola!%20Quiero%20comprar%20un%20panel%20de%20Free%20Fire`, '_blank');
+        };
+    }
+    
+    const footerDiscordLink = document.getElementById('footerDiscordLink');
+    if (footerDiscordLink) {
+        footerDiscordLink.onclick = (e) => {
+            e.preventDefault();
+            const link = config.discord || 'https://discord.gg/tu-invitacion';
+            window.open(link, '_blank');
+        };
+    }
+    
+    // Texto de contacto en footer
+    const footerWhatsappTexto = document.getElementById('footerWhatsappTexto');
+    if (footerWhatsappTexto) {
+        const numeroMostrar = config.whatsapp || '+123 456 7890';
+        footerWhatsappTexto.innerHTML = `<i class="fab fa-whatsapp"></i> ${numeroMostrar}`;
+    }
+    
+    const footerDiscordTexto = document.getElementById('footerDiscordTexto');
+    if (footerDiscordTexto) {
+        const linkMostrar = config.discord ? 'Discord Invitación' : 'koala.cheats';
+        const texto = config.discord ? 'Discord Unido' : 'koala.cheats';
+        footerDiscordTexto.innerHTML = `<i class="fab fa-discord"></i> ${texto}`;
+    }
+}
+
+// ============================================
+// FUNCIONES DE UI Y ANIMACIONES
+// ============================================
+
 function scrollToCatalogo() {
     document.getElementById('catalogo').scrollIntoView({ behavior: 'smooth' });
 }
@@ -326,10 +391,14 @@ function iniciarAnimacionesProductos() {
     });
 }
 
-// Inicialización
+// ============================================
+// INICIALIZACIÓN
+// ============================================
+
 document.addEventListener('DOMContentLoaded', () => {
     cargarProductosDesdeAdmin();
     cargarCarrito();
+    actualizarBotonesContacto(); // ← NUEVA: Actualiza los botones con la configuración
     
     const openCartBtn = document.getElementById('openCartBtn');
     if (openCartBtn) openCartBtn.onclick = mostrarCarrito;
