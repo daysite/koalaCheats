@@ -1,6 +1,14 @@
+// ============================================
+// ADMIN SCRIPT - KOALA CHEATS
+// ============================================
+
 let productos = [];
 let ventas = [];
 let configuracion = {};
+
+// ============================================
+// AUTENTICACIÓN ADMIN
+// ============================================
 
 function verificarAuth() {
     const logged = localStorage.getItem('adminLogged');
@@ -18,7 +26,12 @@ function verificarAuth() {
     }
 }
 
+// ============================================
+// CARGA DE DATOS
+// ============================================
+
 function cargarDatos() {
+    // Cargar productos
     const productosGuardados = localStorage.getItem('koalaProductos');
     if (productosGuardados) {
         productos = JSON.parse(productosGuardados);
@@ -31,6 +44,7 @@ function cargarDatos() {
         guardarProductos();
     }
     
+    // Cargar ventas
     const ventasGuardadas = localStorage.getItem('koalaVentas');
     if (ventasGuardadas) {
         ventas = JSON.parse(ventasGuardadas);
@@ -39,6 +53,7 @@ function cargarDatos() {
         guardarVentas();
     }
     
+    // Cargar configuración
     const configGuardada = localStorage.getItem('koalaConfig');
     if (configGuardada) {
         configuracion = JSON.parse(configGuardada);
@@ -50,7 +65,12 @@ function cargarDatos() {
     actualizarDashboard();
     mostrarProductos();
     mostrarVentas();
+    cargarUsuariosFirebase(); // ← NUEVO: Cargar usuarios desde Firebase
 }
+
+// ============================================
+// GUARDAR DATOS (LOCAL)
+// ============================================
 
 function guardarProductos() {
     localStorage.setItem('koalaProductos', JSON.stringify(productos));
@@ -59,6 +79,10 @@ function guardarProductos() {
 function guardarVentas() {
     localStorage.setItem('koalaVentas', JSON.stringify(ventas));
 }
+
+// ============================================
+// DASHBOARD
+// ============================================
 
 function actualizarDashboard() {
     const totalVentas = ventas.reduce((sum, v) => sum + v.total, 0);
@@ -74,6 +98,7 @@ function actualizarDashboard() {
     document.getElementById('totalProductos').innerText = productos.length;
     document.getElementById('ventasHoy').innerText = `$${ventasHoy}`;
     
+    // Ventas recientes
     const recientes = [...ventas].reverse().slice(0, 5);
     const tbody = document.getElementById('ventasRecientesBody');
     if (tbody) {
@@ -94,9 +119,18 @@ function actualizarDashboard() {
     }
 }
 
+// ============================================
+// GESTIÓN DE PRODUCTOS (CRUD)
+// ============================================
+
 function mostrarProductos() {
     const tbody = document.getElementById('productosBody');
     if (!tbody) return;
+    
+    if (productos.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6">No hay productos registrados</td></tr>';
+        return;
+    }
     
     tbody.innerHTML = productos.map(p => `
         <tr>
@@ -112,6 +146,73 @@ function mostrarProductos() {
         </tr>
     `).join('');
 }
+
+function abrirModalProducto(producto = null) {
+    const modal = document.getElementById('modalProducto');
+    const titulo = document.getElementById('modalProductoTitulo');
+    
+    if (producto) {
+        titulo.innerText = 'Editar Producto';
+        document.getElementById('productoId').value = producto.id;
+        document.getElementById('productoNombre').value = producto.nombre;
+        document.getElementById('productoPrecio').value = producto.precio;
+        document.getElementById('productoCaracteristicas').value = producto.caracteristicas.join(', ');
+        document.getElementById('productoStock').value = producto.stock;
+    } else {
+        titulo.innerText = 'Nuevo Producto';
+        document.getElementById('formProducto').reset();
+        document.getElementById('productoId').value = '';
+    }
+    
+    modal.style.display = 'block';
+}
+
+function cerrarModalProducto() {
+    document.getElementById('modalProducto').style.display = 'none';
+}
+
+document.getElementById('formProducto')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const id = document.getElementById('productoId').value;
+    const nombre = document.getElementById('productoNombre').value;
+    const precio = parseFloat(document.getElementById('productoPrecio').value);
+    const caracteristicas = document.getElementById('productoCaracteristicas').value.split(',').map(c => c.trim());
+    const stock = parseInt(document.getElementById('productoStock').value);
+    
+    if (id) {
+        const index = productos.findIndex(p => p.id == id);
+        productos[index] = { ...productos[index], nombre, precio, caracteristicas, stock };
+    } else {
+        const nuevoId = Math.max(...productos.map(p => p.id), 0) + 1;
+        productos.push({ id: nuevoId, nombre, precio, caracteristicas, stock });
+    }
+    
+    guardarProductos();
+    mostrarProductos();
+    actualizarDashboard();
+    cerrarModalProducto();
+    alert('✅ Producto guardado correctamente');
+});
+
+function editarProducto(id) {
+    const producto = productos.find(p => p.id === id);
+    if (producto) abrirModalProducto(producto);
+}
+
+function eliminarProducto(id) {
+    if (confirm('¿Eliminar este producto permanentemente?')) {
+        productos = productos.filter(p => p.id !== id);
+        guardarProductos();
+        mostrarProductos();
+        actualizarDashboard();
+        alert('✅ Producto eliminado');
+    }
+}
+
+// ============================================
+// GESTIÓN DE VENTAS
+// ============================================
 
 function mostrarVentas() {
     const tbody = document.getElementById('ventasBody');
@@ -192,78 +293,97 @@ function filtrarVentas() {
     }
 }
 
-function abrirModalProducto(producto = null) {
-    const modal = document.getElementById('modalProducto');
-    const titulo = document.getElementById('modalProductoTitulo');
-    
-    if (producto) {
-        titulo.innerText = 'Editar Producto';
-        document.getElementById('productoId').value = producto.id;
-        document.getElementById('productoNombre').value = producto.nombre;
-        document.getElementById('productoPrecio').value = producto.precio;
-        document.getElementById('productoCaracteristicas').value = producto.caracteristicas.join(', ');
-        document.getElementById('productoStock').value = producto.stock;
-    } else {
-        titulo.innerText = 'Nuevo Producto';
-        document.getElementById('formProducto').reset();
-        document.getElementById('productoId').value = '';
-    }
-    
-    modal.style.display = 'block';
-}
+// ============================================
+// CONFIGURACIÓN (LOCAL + FIREBASE)
+// ============================================
 
-function cerrarModalProducto() {
-    document.getElementById('modalProducto').style.display = 'none';
-}
-
-document.getElementById('formProducto')?.addEventListener('submit', (e) => {
-    e.preventDefault();
-    
-    const id = document.getElementById('productoId').value;
-    const nombre = document.getElementById('productoNombre').value;
-    const precio = parseFloat(document.getElementById('productoPrecio').value);
-    const caracteristicas = document.getElementById('productoCaracteristicas').value.split(',').map(c => c.trim());
-    const stock = parseInt(document.getElementById('productoStock').value);
-    
-    if (id) {
-        const index = productos.findIndex(p => p.id == id);
-        productos[index] = { ...productos[index], nombre, precio, caracteristicas, stock };
-    } else {
-        const nuevoId = Math.max(...productos.map(p => p.id), 0) + 1;
-        productos.push({ id: nuevoId, nombre, precio, caracteristicas, stock });
-    }
-    
-    guardarProductos();
-    mostrarProductos();
-    actualizarDashboard();
-    cerrarModalProducto();
-    alert('✅ Producto guardado correctamente');
-});
-
-function editarProducto(id) {
-    const producto = productos.find(p => p.id === id);
-    if (producto) abrirModalProducto(producto);
-}
-
-function eliminarProducto(id) {
-    if (confirm('¿Eliminar este producto permanentemente?')) {
-        productos = productos.filter(p => p.id !== id);
-        guardarProductos();
-        mostrarProductos();
-        actualizarDashboard();
-        alert('✅ Producto eliminado');
-    }
-}
-
-function guardarConfiguracion() {
-    configuracion = {
+// Modificar la función guardarConfiguracion para sincronizar con Firebase
+async function guardarConfiguracion() {
+    const config = {
         whatsapp: document.getElementById('configWhatsapp').value,
         discord: document.getElementById('configDiscord').value,
-        email: document.getElementById('configEmail').value
+        email: document.getElementById('configEmail').value,
+        ultimaActualizacion: new Date().toISOString()
     };
-    localStorage.setItem('koalaConfig', JSON.stringify(configuracion));
-    alert('✅ Configuración guardada correctamente');
+    
+    // Guardar en localStorage
+    localStorage.setItem('koalaConfig', JSON.stringify(config));
+    configuracion = config;
+    
+    // Guardar en Firebase (para sincronizar entre dispositivos)
+    try {
+        await db.ref('configuracion').update(config);
+        alert('✅ Configuración guardada correctamente en la nube');
+    } catch (error) {
+        alert('⚠️ Configuración guardada localmente, pero no en la nube: ' + error.message);
+    }
 }
+
+// ============================================
+// FUNCIONES ADMIN CON FIREBASE
+// ============================================
+
+async function cargarUsuariosFirebase() {
+    try {
+        const usuarios = await obtenerTodosUsuarios();
+        const tbody = document.getElementById('usuariosBody');
+        if (!tbody) return;
+        
+        if (usuarios.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6">No hay usuarios registrados</td></tr>';
+            return;
+        }
+        
+        tbody.innerHTML = usuarios.map(u => `
+            <tr>
+                <td>${u.uid.substring(0, 12)}...</td>
+                <td>${u.nombre || 'Sin nombre'}</td>
+                <td>${u.email}</td>
+                <td>${u.rol || 'cliente'}</td>
+                <td>${u.fechaRegistro ? new Date(u.fechaRegistro).toLocaleDateString() : 'N/A'}</td>
+                <td>
+                    <button class="btn-edit" onclick="cambiarRolUsuario('${u.uid}')">
+                        <i class="fas fa-user-cog"></i>
+                    </button>
+                    <button class="btn-delete" onclick="eliminarUsuario('${u.uid}')">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+    } catch (error) {
+        console.error('Error al cargar usuarios:', error);
+        const tbody = document.getElementById('usuariosBody');
+        if (tbody) {
+            tbody.innerHTML = '<tr><td colspan="6">❌ Error al cargar usuarios: ' + error.message + '</td></tr>';
+        }
+    }
+}
+
+async function cambiarRolUsuario(uid) {
+    const nuevoRol = prompt('¿Qué rol quieres asignar?\nOpciones: admin, cliente, vendedor', 'admin');
+    if (nuevoRol && ['admin', 'cliente', 'vendedor'].includes(nuevoRol)) {
+        await actualizarDatosUsuario(uid, { rol: nuevoRol });
+        cargarUsuariosFirebase();
+        alert('✅ Rol actualizado correctamente');
+    }
+}
+
+async function eliminarUsuario(uid) {
+    if (confirm('¿Eliminar este usuario permanentemente?')) {
+        try {
+            await db.ref('usuarios/' + uid).remove();
+            cargarUsuariosFirebase();
+            alert('✅ Usuario eliminado correctamente');
+        } catch (error) {
+            alert('❌ Error al eliminar usuario: ' + error.message);
+        }
+    }
+}
+
+// ============================================
+// NAVEGACIÓN ENTRE SECCIONES
+// ============================================
 
 function mostrarSeccion(seccion) {
     document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active-section'));
@@ -276,11 +396,13 @@ function mostrarSeccion(seccion) {
         dashboard: 'Dashboard',
         productos: 'Gestión de Productos',
         ventas: 'Todas las Ventas',
+        usuarios: 'Usuarios Administradores',
         configuracion: 'Configuración'
     };
     document.getElementById('seccionTitulo').innerText = titulos[seccion];
     
     if (seccion === 'ventas') mostrarVentas();
+    if (seccion === 'usuarios') cargarUsuariosFirebase();
 }
 
 function cerrarSesion() {
@@ -288,4 +410,18 @@ function cerrarSesion() {
     window.location.reload();
 }
 
-verificarAuth();
+// ============================================
+// INICIALIZAR
+// ============================================
+
+// Esperar a que Firebase esté listo
+document.addEventListener('DOMContentLoaded', () => {
+    verificarAuth();
+});
+
+// Verificar que Firebase está cargado
+if (typeof firebase === 'undefined') {
+    console.error('❌ Firebase no está cargado. Asegúrate de incluir los SDKs.');
+} else {
+    console.log('✅ Firebase cargado correctamente');
+}
