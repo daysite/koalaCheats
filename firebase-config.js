@@ -2,8 +2,9 @@
 // CONFIGURACIÓN DE FIREBASE - KOALA CHEATS
 // ============================================
 
+// 🔥 TU CONFIGURACIÓN DE FIREBASE (COPIADA DE FIREBASE CONSOLE)
 const firebaseConfig = {
-    apiKey: "AIzaSyAuwvLfL0n8j8r6ySikHe4BEMEc2380qsM",
+    apiKey: "AIzaSyAwuvLfL0n8j8r6ySikHe4BEMEc238oqsM",
     authDomain: "koalacheats.firebaseapp.com",
     databaseURL: "https://koalacheats-default-rtdb.firebaseio.com",
     projectId: "koalacheats",
@@ -13,11 +14,13 @@ const firebaseConfig = {
     measurementId: "G-Q319Q6RVG6"
 };
 
-// Inicializar Firebase
+// Inicializar Firebase (VERSIÓN COMPAT - PARA CDN)
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.database();
 const storage = firebase.storage();
+
+console.log('✅ Firebase conectado correctamente');
 
 // ============================================
 // FUNCIONES DE AUTENTICACIÓN
