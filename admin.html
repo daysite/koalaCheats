@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koala Cheats - Panel de Administración</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="admin-body">
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-koala"></i>
+                <h2>Koala Admin</h2>
+            </div>
+            <nav class="admin-nav">
+                <a href="#" onclick="mostrarSeccion('dashboard')" class="nav-item active">
+                    <i class="fas fa-chart-line"></i> Dashboard
+                </a>
+                <a href="#" onclick="mostrarSeccion('productos')" class="nav-item">
+                    <i class="fas fa-box"></i> Productos
+                </a>
+                <a href="#" onclick="mostrarSeccion('ventas')" class="nav-item">
+                    <i class="fas fa-shopping-cart"></i> Ventas
+                </a>
+                <a href="#" onclick="mostrarSeccion('usuarios')" class="nav-item">
+                    <i class="fas fa-users"></i> Usuarios
+                </a>
+                <a href="#" onclick="mostrarSeccion('configuracion')" class="nav-item">
+                    <i class="fas fa-cog"></i> Configuración
+                </a>
+                <a href="index.html" class="nav-item">
+                    <i class="fas fa-store"></i> Ver Tienda
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <header class="admin-header">
+                <h1 id="seccionTitulo">Dashboard</h1>
+                <div class="admin-user">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Admin Koala</span>
+                    <button onclick="cerrarSesion()" class="btn-logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Sección Dashboard -->
+            <div id="dashboard" class="admin-section active-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-dollar-sign"></i>
+                        <div class="stat-info">
+                            <h3>Ventas Totales</h3>
+                            <p id="totalVentas">$0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-users"></i>
+                        <div class="stat-info">
+                            <h3>Clientes</h3>
+                            <p id="totalClientes">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-box"></i>
+                        <div class="stat-info">
+                            <h3>Productos</h3>
+                            <p id="totalProductos">0</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-chart-line"></i>
+                        <div class="stat-info">
+                            <h3>Ventas Hoy</h3>
+                            <p id="ventasHoy">$0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-sales">
+                    <h2><i class="fas fa-clock"></i> Ventas Recientes</h2>
+                    <div class="table-container">
+                        <table id="tablaVentasRecientes">
+                            <thead>
+                                <tr><th>ID</th><th>Cliente</th><th>Producto</th><th>Monto</th><th>Fecha</th><th>Estado</th></tr>
+                            </thead>
+                            <tbody id="ventasRecientesBody">
+                                <tr><td colspan="6">Cargando...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección Productos -->
+            <div id="productos" class="admin-section">
+                <div class="section-header">
+                    <h2>Gestión de Productos</h2>
+                    <button class="btn-primary" onclick="abrirModalProducto()">
+                        <i class="fas fa-plus"></i> Nuevo Producto
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table id="tablaProductos">
+                        <thead>
+                            <tr><th>ID</th><th>Nombre</th><th>Precio</th><th>Características</th><th>Stock</th><th>Acciones</th></tr>
+                        </thead>
+                        <tbody id="productosBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Sección Ventas -->
+            <div id="ventas" class="admin-section">
+                <h2>Todas las Ventas</h2>
+                <div class="filtros">
+                    <input type="text" id="buscarVenta" placeholder="Buscar por cliente..." onkeyup="filtrarVentas()">
+                    <select id="filtroEstado" onchange="filtrarVentas()">
+                        <option value="todos">Todos los estados</option>
+                        <option value="completado">Completado</option>
+                        <option value="pendiente">Pendiente</option>
+                        <option value="cancelado">Cancelado</option>
+                    </select>
+                </div>
+                <div class="table-container">
+                    <table id="tablaVentas">
+                        <thead>
+                            <tr><th>ID</th><th>Cliente</th><th>WhatsApp</th><th>Productos</th><th>Total</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr>
+                        </thead>
+                        <tbody id="ventasBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Sección Usuarios -->
+            <div id="usuarios" class="admin-section">
+                <div class="section-header">
+                    <h2>Gestión de Usuarios</h2>
+                </div>
+                <div class="table-container">
+                    <table id="tablaUsuarios">
+                        <thead>
+                            <tr><th>ID</th><th>Nombre</th><th>Email</th><th>Rol</th><th>Fecha Registro</th><th>Acciones</th></tr>
+                        </thead>
+                        <tbody id="usuariosBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Sección Configuración -->
+            <div id="configuracion" class="admin-section">
+                <h2>Configuración</h2>
+                <div class="config-form">
+                    <div class="form-group">
+                        <label>WhatsApp Oficial</label>
+                        <input type="text" id="configWhatsapp" placeholder="Número de WhatsApp">
+                    </div>
+                    <div class="form-group">
+                        <label>Link de Discord</label>
+                        <input type="text" id="configDiscord" placeholder="Invitación de Discord">
+                    </div>
+                    <div class="form-group">
+                        <label>Email de Soporte</label>
+                        <input type="email" id="configEmail" placeholder="soporte@koalacheats.com">
+                    </div>
+                    <button class="btn-primary" onclick="guardarConfiguracion()">Guardar Cambios</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Producto -->
+    <div id="modalProducto" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalProductoTitulo">Nuevo Producto</h2>
+                <span class="close" onclick="cerrarModalProducto()">&times;</span>
+            </div>
+            <form id="formProducto">
+                <input type="hidden" id="productoId">
+                <div class="form-group">
+                    <label>Nombre del Producto</label>
+                    <input type="text" id="productoNombre" required>
+                </div>
+                <div class="form-group">
+                    <label>Precio (USD)</label>
+                    <input type="number" id="productoPrecio" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Características (separadas por coma)</label>
+                    <textarea id="productoCaracteristicas" rows="3" placeholder="Ej: Aim profesional, Magic Bullet, Anti-Ban"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Stock</label>
+                    <input type="number" id="productoStock" value="999">
+                </div>
+                <button type="submit" class="btn-primary">Guardar Producto</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="admin-script.js"></script>
+</body>
+</html>
