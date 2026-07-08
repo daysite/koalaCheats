@@ -141,18 +141,6 @@
             color: #ea4335;
             margin-right: 8px;
         }
-        
-        .btn-volver-tienda {
-            display: block;
-            text-align: center;
-            margin-top: 1rem;
-            color: #10b981;
-            text-decoration: none;
-        }
-        
-        .btn-volver-tienda:hover {
-            text-decoration: underline;
-        }
     </style>
 </head>
 <body>
@@ -185,8 +173,6 @@
                     <p>¿No tienes cuenta? <a href="#" onclick="toggleForm()">Regístrate aquí</a></p>
                     <p><a href="#" onclick="recuperarPassword()">¿Olvidaste tu contraseña?</a></p>
                 </div>
-                
-                <a href="index.html" class="btn-volver-tienda">🏠 Volver a la tienda</a>
             </form>
             
             <!-- Formulario de Registro -->
@@ -217,8 +203,6 @@
                 <div class="auth-links">
                     <p>¿Ya tienes cuenta? <a href="#" onclick="toggleForm()">Inicia sesión</a></p>
                 </div>
-                
-                <a href="index.html" class="btn-volver-tienda">🏠 Volver a la tienda</a>
             </form>
         </div>
     </div>
@@ -263,6 +247,10 @@
             authSuccess.style.display = 'none';
         }
         
+        // ============================================
+        // INICIO DE SESIÓN - GUARDA EN LOCALSTORAGE
+        // ============================================
+        
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('loginEmail').value;
@@ -271,14 +259,25 @@
             const result = await iniciarSesion(email, password);
             
             if (result.success) {
+                // GUARDAR SESIÓN EN LOCALSTORAGE
+                localStorage.setItem('firebaseUser', JSON.stringify({
+                    uid: result.user.uid,
+                    email: result.user.email,
+                    nombre: result.user.displayName || 'Usuario'
+                }));
+                
                 showSuccess('✅ ¡Bienvenido! Redirigiendo...');
                 setTimeout(() => {
-                    window.location.href = 'perfil.html';
+                    window.location.href = 'index.html';
                 }, 1500);
             } else {
                 showError('❌ ' + result.error);
             }
         });
+        
+        // ============================================
+        // REGISTRO - GUARDA EN LOCALSTORAGE
+        // ============================================
         
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -301,14 +300,25 @@
             const result = await registrarUsuario(email, password, nombre, telefono);
             
             if (result.success) {
-                showSuccess('✅ ¡Registro exitoso! Revisa tu email para verificar tu cuenta. Redirigiendo...');
+                // GUARDAR SESIÓN EN LOCALSTORAGE
+                localStorage.setItem('firebaseUser', JSON.stringify({
+                    uid: result.user.uid,
+                    email: result.user.email,
+                    nombre: nombre
+                }));
+                
+                showSuccess('✅ ¡Registro exitoso! Redirigiendo...');
                 setTimeout(() => {
-                    window.location.href = 'perfil.html';
+                    window.location.href = 'index.html';
                 }, 2000);
             } else {
                 showError('❌ ' + result.error);
             }
         });
+        
+        // ============================================
+        // LOGIN CON GOOGLE - GUARDA EN LOCALSTORAGE
+        // ============================================
         
         async function loginWithGoogle() {
             try {
@@ -316,6 +326,7 @@
                 const result = await auth.signInWithPopup(provider);
                 const user = result.user;
                 
+                // Guardar en Firebase Database si es nuevo
                 const userData = await obtenerDatosUsuario(user.uid);
                 if (!userData) {
                     await db.ref('usuarios/' + user.uid).set({
@@ -330,14 +341,25 @@
                     });
                 }
                 
+                // GUARDAR SESIÓN EN LOCALSTORAGE
+                localStorage.setItem('firebaseUser', JSON.stringify({
+                    uid: user.uid,
+                    email: user.email,
+                    nombre: user.displayName || 'Usuario Google'
+                }));
+                
                 showSuccess('✅ ¡Bienvenido! Redirigiendo...');
                 setTimeout(() => {
-                    window.location.href = 'perfil.html';
+                    window.location.href = 'index.html';
                 }, 1500);
             } catch (error) {
                 showError('❌ Error al iniciar con Google: ' + error.message);
             }
         }
+        
+        // ============================================
+        // RECUPERAR CONTRASEÑA
+        // ============================================
         
         async function recuperarPassword() {
             const email = prompt('📧 Ingresa tu email para recuperar tu contraseña:');
@@ -351,11 +373,25 @@
             }
         }
         
+        // ============================================
+        // VERIFICAR SI YA ESTÁ LOGUEADO
+        // ============================================
+        
         auth.onAuthStateChanged(async (user) => {
             if (user) {
-                window.location.href = 'perfil.html';
+                // Si ya está logueado, ir directo a la tienda
+                localStorage.setItem('firebaseUser', JSON.stringify({
+                    uid: user.uid,
+                    email: user.email,
+                    nombre: user.displayName || 'Usuario'
+                }));
+                window.location.href = 'index.html';
             }
         });
+        
+        // ============================================
+        // EXPORTAR FUNCIONES GLOBALES
+        // ============================================
         
         window.toggleForm = toggleForm;
         window.recuperarPassword = recuperarPassword;
