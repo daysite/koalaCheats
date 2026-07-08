@@ -34,10 +34,21 @@
             color: transparent;
         }
         
-        .auth-box .logo {
+        /* ============================================ */
+        /* LOGO CON IMAGEN PERSONALIZADA */
+        /* ============================================ */
+        .auth-logo {
             text-align: center;
-            font-size: 3rem;
             margin-bottom: 1rem;
+        }
+        
+        .auth-logo img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #10b981;
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
         }
         
         .form-group {
@@ -146,7 +157,13 @@
 <body>
     <div class="auth-container">
         <div class="auth-box">
-            <div class="logo">🐨</div>
+            <!-- ============================================ -->
+            <!-- LOGO CON IMAGEN PERSONALIZADA -->
+            <!-- ============================================ -->
+            <div class="auth-logo">
+                <img src="https://cdn.phototourl.com/free/2026-07-08-5b9d466a-0263-421e-9ce9-0441a7ed2d55.png" alt="Koala Cheats Logo">
+            </div>
+            
             <h1>Koala Cheats</h1>
             
             <div id="authError" class="auth-error"></div>
@@ -259,7 +276,6 @@
             const result = await iniciarSesion(email, password);
             
             if (result.success) {
-                // GUARDAR SESIÓN EN LOCALSTORAGE
                 localStorage.setItem('firebaseUser', JSON.stringify({
                     uid: result.user.uid,
                     email: result.user.email,
@@ -300,7 +316,6 @@
             const result = await registrarUsuario(email, password, nombre, telefono);
             
             if (result.success) {
-                // GUARDAR SESIÓN EN LOCALSTORAGE
                 localStorage.setItem('firebaseUser', JSON.stringify({
                     uid: result.user.uid,
                     email: result.user.email,
@@ -326,7 +341,6 @@
                 const result = await auth.signInWithPopup(provider);
                 const user = result.user;
                 
-                // Guardar en Firebase Database si es nuevo
                 const userData = await obtenerDatosUsuario(user.uid);
                 if (!userData) {
                     await db.ref('usuarios/' + user.uid).set({
@@ -341,7 +355,6 @@
                     });
                 }
                 
-                // GUARDAR SESIÓN EN LOCALSTORAGE
                 localStorage.setItem('firebaseUser', JSON.stringify({
                     uid: user.uid,
                     email: user.email,
@@ -379,7 +392,6 @@
         
         auth.onAuthStateChanged(async (user) => {
             if (user) {
-                // Si ya está logueado, ir directo a la tienda
                 localStorage.setItem('firebaseUser', JSON.stringify({
                     uid: user.uid,
                     email: user.email,
