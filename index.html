@@ -8,6 +8,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <!-- ============================================ -->
+    <!-- VERIFICACIÓN DE LOGIN - REDIRIGE SI NO ESTÁ LOGUEADO -->
+    <!-- ============================================ -->
+    <script>
+        // Verificar si el usuario está logueado
+        const userLogged = localStorage.getItem('firebaseUser');
+        if (!userLogged) {
+            // Si no está logueado, redirigir al login
+            window.location.href = 'login.html';
+        }
+    </script>
+
     <header>
         <div class="logo">
             <i class="fas fa-koala"></i>
@@ -18,7 +30,10 @@
             <a href="#catalogo">Catálogo</a>
             <a href="#carrito">Carrito <span id="cart-count" class="cart-count">0</span></a>
             <a href="#contacto">Contacto</a>
-            <a href="login.html" class="btn-login-nav"><i class="fas fa-user"></i> Mi Cuenta</a>
+            <span id="userGreeting" class="user-greeting"></span>
+            <a href="#" onclick="cerrarSesion()" class="btn-logout-nav">
+                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+            </a>
         </nav>
         <button class="btn-nav" id="openCartBtn">🛒 Ver Carrito</button>
     </header>
